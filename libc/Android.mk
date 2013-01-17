@@ -497,6 +497,10 @@ libc_common_src_files += \
 	arch-mips/bionic/sigsetjmp.S \
 	arch-mips/bionic/vfork.S
 
+ifeq ($(ARCH_ARM_HAVE_ARMV7A),true)
+libc_common_src_files += arch-arm/bionic/bzero.S
+endif
+
 libc_common_src_files += \
 	arch-mips/string/memset.S \
 	arch-mips/string/memcpy.S \
