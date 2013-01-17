@@ -257,7 +257,7 @@ cpackl(long double x, long double y)
 #define __ieee754_ldexpf ldexpf
 
 /* fdlibm kernel function */
-#if defined(KRAIT_NEON_OPTIMIZATION)
+#if defined(KRAIT_NEON_OPTIMIZATION) || defined(SPARROW_NEON_OPTIMIZATION)
 int	__ieee754_rem_pio2(double,double*) __attribute__((pcs("aapcs-vfp")));
 double	__kernel_sin(double,double,int) __attribute__((pcs("aapcs-vfp")));
 double	__kernel_cos(double,double) __attribute__((pcs("aapcs-vfp")));
