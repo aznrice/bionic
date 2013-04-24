@@ -171,6 +171,11 @@ ifeq ($(TARGET_ARCH),arm)
       src/s_sin.c
   endif
 
+  ifeq ($(ARCH_ARM_HAVE_NEON),true)
+    libm_common_src_files += \
+	  arm/e_pow.S
+  endif
+
   ifeq ($(TARGET_USE_SPARROW_BIONIC_OPTIMIZATION),true)
     libm_common_cflags += -DSPARROW_NEON_OPTIMIZATION -fno-if-conversion
   endif
@@ -218,6 +223,8 @@ LOCAL_ARM_MODE := arm
 LOCAL_C_INCLUDES += $(libm_common_includes)
 LOCAL_CFLAGS := $(libm_common_cflags)
 
+LOCAL_CFLAGS:= $(libm_common_cflags)
+
 LOCAL_MODULE:= libm
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
@@ -237,6 +244,8 @@ LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES += $(libm_common_includes)
 LOCAL_CFLAGS := $(libm_common_cflags)
+
+LOCAL_CFLAGS:= $(libm_common_cflags)
 
 LOCAL_MODULE:= libm
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk

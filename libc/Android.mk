@@ -277,6 +277,7 @@ libc_common_src_files := \
 	bionic/libc_init_common.c \
 	bionic/logd_write.c \
 	bionic/md5.c \
+        bionic/memmove_words.c \
 	bionic/pututline.c \
 	bionic/realpath.c \
 	bionic/sched_getaffinity.c \
@@ -367,6 +368,7 @@ libc_common_src_files += \
 	arch-arm/bionic/_setjmp.S \
 	arch-arm/bionic/abort_arm.S \
 	arch-arm/bionic/atomics_arm.c \
+        arch-arm/bionic/bzero.S \
 	arch-arm/bionic/clone.S \
 	arch-arm/bionic/eabi.c \
 	arch-arm/bionic/ffs.S \
@@ -375,11 +377,17 @@ libc_common_src_files += \
 	arch-arm/bionic/libgcc_compat.c \
 	arch-arm/bionic/tkill.S \
 	arch-arm/bionic/tgkill.S \
+        arch-arm/bionic/memchr.S \
 	arch-arm/bionic/memcmp.S \
 	arch-arm/bionic/memcmp16.S \
+        arch-arm/bionic/memcpy-hybrid.S \
+        arch-arm/bionic/memset.S \
 	arch-arm/bionic/setjmp.S \
 	arch-arm/bionic/sigsetjmp.S \
 	arch-arm/bionic/strcmp.S \
+        arch-arm/bionic/strchr.S \
+        arch-arm/bionic/strcpy.c \
+        arch-arm/bionic/strlen.S \
 	arch-arm/bionic/syscall.S \
 	string/strncmp.c \
 	unistd/socketcalls.c
@@ -396,23 +404,14 @@ ifeq ($(KERNEL_HAS_GETTIMEOFDAY_HELPER),true)
 	arch-arm/bionic/clock_gettime_syscall.S
 endif # KERNEL_HAS_GETTIMEOFDAY_HELPER
 
-# Check if we want a neonized version of memmove instead of the
-# current ARM version
-ifeq ($(TARGET_USE_SCORPION_BIONIC_OPTIMIZATION),true)
-libc_common_src_files += \
-	arch-arm/bionic/memmove.S \
-	bionic/memmove_words.c
-else
-ifneq (, $(filter true,$(TARGET_USE_KRAIT_BIONIC_OPTIMIZATION) $(TARGET_USE_SPARROW_BIONIC_OPTIMIZATION)))
+ifeq ($(ARCH_ARM_HAVE_NEON),true) 
  libc_common_src_files += \
 	arch-arm/bionic/memmove.S
  else # Other ARM
  libc_common_src_files += \
 	string/bcopy.c \
-	string/memmove.c.arm \
-	bionic/memmove_words.c
- endif # !TARGET_USE_KRAIT_BIONIC_OPTIMIZATION
-endif # !TARGET_USE_SCORPION_BIONIC_OPTIMIZATION
+	string/memmove.c.arm 
+endif # ARCH_ARM_HAVE_NEON 
 
 # These files need to be arm so that gdbserver
 # can set breakpoints in them without messing
@@ -433,32 +432,6 @@ libc_arch_static_src_files := \
 
 libc_arch_dynamic_src_files := \
 	arch-arm/bionic/exidx_dynamic.c
-
-ifeq ($(ARCH_ARMV7A_NON_QCOM),true)
-libc_common_src_files += \
-	arch-arm/bionic/armv7/memchr.S \
-	arch-arm/bionic/armv7/memcpy.S \
-	arch-arm/bionic/armv7/memset.S \
-	arch-arm/bionic/armv7/bzero.S \
-	arch-arm/bionic/armv7/strchr.S \
-	arch-arm/bionic/armv7/strcpy.c \
-	arch-arm/bionic/armv7/strlen.S
-else
-libc_common_src_files += \
-	string/memchr.c \
-	arch-arm/bionic/memcpy.S \
-	arch-arm/bionic/memset.S \
-	string/strchr.c \
-	arch-arm/bionic/strcpy.S \
-	arch-arm/bionic/strlen.c.arm
-endif
-
-else # arm
-
-libc_common_src_files += \
-	string/memchr.c \
-	string/strchr.c
-
 endif # arm
 
 ifeq ($(TARGET_ARCH),x86)
@@ -606,6 +579,17 @@ ifeq ($(TARGET_ARCH),arm)
   ifeq ($(ARCH_ARM_USE_NON_NEON_MEMCPY),true)
     libc_common_cflags += -DARCH_ARM_USE_NON_NEON_MEMCPY
   endif
+
+  ifeq ($(ARCH_ARM_HAVE_NEON_UNALIGNED_ACCESS),true)
+    libc_common_cflags += -DNEON_UNALIGNED_ACCESS
+  endif
+  ifneq ($(ARCH_ARM_NEON_MEMCPY_ALIGNMENT_DIVIDER),)
+    libc_common_cflags += -DNEON_MEMCPY_ALIGNMENT_DIVIDER=$(ARCH_ARM_NEON_MEMCPY_ALIGNMENT_DIVIDER)
+  endif
+  ifneq ($(ARCH_ARM_NEON_MEMSET_DIVIDER),)
+    libc_common_cflags += -DNEON_MEMSET_DIVIDER=$(ARCH_ARM_NEON_MEMSET_DIVIDER)
+  endif
+
   # Add in defines to activate SCORPION_NEON_OPTIMIZATION
   ifeq ($(TARGET_USE_SCORPION_BIONIC_OPTIMIZATION),true)
     libc_common_cflags += -DSCORPION_NEON_OPTIMIZATION
