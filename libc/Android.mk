@@ -380,7 +380,6 @@ libc_common_src_files += \
         arch-arm/bionic/memchr.S \
 	arch-arm/bionic/memcmp.S \
 	arch-arm/bionic/memcmp16.S \
-        arch-arm/bionic/memcpy-hybrid.S \
         arch-arm/bionic/memset.S \
 	arch-arm/bionic/setjmp.S \
 	arch-arm/bionic/sigsetjmp.S \
@@ -406,9 +405,11 @@ endif # KERNEL_HAS_GETTIMEOFDAY_HELPER
 
 ifeq ($(ARCH_ARM_HAVE_NEON),true) 
  libc_common_src_files += \
-	arch-arm/bionic/memmove.S
+	arch-arm/bionic/memmove.S \
+	arch-arm/bionic/memcpy.S
  else # Other ARM
  libc_common_src_files += \
+	arch-arm/bionic/memcpy-non-neon.S \
 	string/bcopy.c \
 	string/memmove.c.arm 
 endif # ARCH_ARM_HAVE_NEON 
