@@ -556,7 +556,7 @@ ifneq ($(BOARD_MALLOC_ALIGNMENT),)
 endif
 
 ifeq ($(TARGET_ARCH),arm)
-  libc_common_cflags += -DSOFTFLOAT
+  libc_common_cflags += -DHARDFLOAT
   libc_common_cflags += -fstrict-aliasing
   libc_crt_target_cflags := -mthumb-interwork
   #

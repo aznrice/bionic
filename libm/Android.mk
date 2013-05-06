@@ -149,7 +149,7 @@ libm_common_src_files:= \
 	src/s_isnan.c \
 	src/s_modf.c
 
-libm_common_cflags :=
+libm_common_cflags := -DHARDFLOAT
 
 ifeq ($(TARGET_ARCH),arm)
   libm_common_src_files += \
