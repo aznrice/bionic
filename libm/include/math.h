@@ -11,15 +11,17 @@
 
 /*
  * from: @(#)fdlibm.h 5.1 93/09/24
- * $FreeBSD$
+ * $FreeBSD: src/lib/msun/src/math.h,v 1.61 2005/04/16 21:12:47 das Exp $
  */
 
 #ifndef _MATH_H_
 #define	_MATH_H_
 
 #include <sys/cdefs.h>
-#include <sys/_types.h>
+#include <sys/types.h>
 #include <limits.h>
+
+#define __pure2
 
 /*
  * ANSI/POSIX
@@ -34,29 +36,37 @@ extern const union __nan_un {
 	float		__uf;
 } __nan;
 
-#if __GNUC_PREREQ__(3, 3) || (defined(__INTEL_COMPILER) && __INTEL_COMPILER >= 800)
+/* #if __GNUC_PREREQ__(3, 3) || (defined(__INTEL_COMPILER) && __INTEL_COMPILER >= 800) */
+#if 1
 #define	__MATH_BUILTIN_CONSTANTS
 #endif
 
-#if __GNUC_PREREQ__(3, 0) && !defined(__INTEL_COMPILER)
+/* #if __GNUC_PREREQ__(3, 0) && !defined(__INTEL_COMPILER) */
+#if 1
 #define	__MATH_BUILTIN_RELOPS
 #endif
 
-#ifdef __MATH_BUILTIN_CONSTANTS
+/* #ifdef __MATH_BUILTIN_CONSTANTS */
+#if 1
 #define	HUGE_VAL	__builtin_huge_val()
 #else
 #define	HUGE_VAL	(__infinity.__ud)
 #endif
 
-#if __ISO_C_VISIBLE >= 1999
-#define	FP_ILOGB0	(-INT_MAX) /* Android-changed */
-#define	FP_ILOGBNAN	INT_MAX /* Android-changed */
+/* #if __ISO_C_VISIBLE >= 1999 */
+#if 0
+#define	FP_ILOGB0	(-__INT_MAX)
+#define	FP_ILOGBNAN	__INT_MAX
+#else
+#define	FP_ILOGB0	(-INT_MAX)
+#define	FP_ILOGBNAN	INT_MAX
+#endif
 
 #ifdef __MATH_BUILTIN_CONSTANTS
 #define	HUGE_VALF	__builtin_huge_valf()
 #define	HUGE_VALL	__builtin_huge_vall()
-#define	INFINITY	__builtin_inff()
-#define	NAN		__builtin_nanf("")
+#define	INFINITY	__builtin_inf()
+#define	NAN		__builtin_nan("")
 #else
 #define	HUGE_VALF	(float)HUGE_VAL
 #define	HUGE_VALL	(long double)HUGE_VAL
@@ -68,11 +78,14 @@ extern const union __nan_un {
 #define	MATH_ERREXCEPT	2
 #define	math_errhandling	MATH_ERREXCEPT
 
-#define	FP_FAST_FMAF	1
-#ifdef __ia64__
-#define	FP_FAST_FMA	1
-#define	FP_FAST_FMAL	1
+/* XXX We need a <machine/math.h>. */
+#if defined(__ia64__) || defined(__sparc64__)
+#define	FP_FAST_FMA
 #endif
+#ifdef __ia64__
+#define	FP_FAST_FMAL
+#endif
+#define	FP_FAST_FMAF
 
 /* Symbolic constants to classify floating point numbers. */
 #define	FP_INFINITE	0x01
@@ -91,10 +104,10 @@ extern const union __nan_un {
     : __isfinitel(x))
 #define	isinf(x)					\
     ((sizeof (x) == sizeof (float)) ? __isinff(x)	\
-    : (sizeof (x) == sizeof (double)) ? isinf(x)	\
+    : (sizeof (x) == sizeof (double)) ? __isinf(x)	\
     : __isinfl(x))
 #define	isnan(x)					\
-    ((sizeof (x) == sizeof (float)) ? __isnanf(x)	\
+    ((sizeof (x) == sizeof (float)) ? isnanf(x)		\
     : (sizeof (x) == sizeof (double)) ? isnan(x)	\
     : __isnanl(x))
 #define	isnormal(x)					\
@@ -124,14 +137,16 @@ extern const union __nan_un {
     : (sizeof (x) == sizeof (double)) ? __signbit(x)	\
     : __signbitl(x))
 
+#if 0
 typedef	__double_t	double_t;
 typedef	__float_t	float_t;
-#endif /* __ISO_C_VISIBLE >= 1999 */
+#endif 
+/* #endif */ /* __ISO_C_VISIBLE >= 1999 */
 
 /*
  * XOPEN/SVID
  */
-#if __BSD_VISIBLE || __XSI_VISIBLE
+/* #if __BSD_VISIBLE || __XSI_VISIBLE */
 #define	M_E		2.7182818284590452354	/* e */
 #define	M_LOG2E		1.4426950408889634074	/* log 2e */
 #define	M_LOG10E	0.43429448190325182765	/* log 10e */
@@ -148,7 +163,7 @@ typedef	__float_t	float_t;
 
 #define	MAXFLOAT	((float)3.40282346638528860e+38)
 extern int signgam;
-#endif /* __BSD_VISIBLE || __XSI_VISIBLE */
+/* #endif */ /* __BSD_VISIBLE || __XSI_VISIBLE */
 
 #if __BSD_VISIBLE
 #if 0
@@ -175,8 +190,8 @@ int	__isfinitef(float) __pure2;
 int	__isfinite(double) __pure2;
 int	__isfinitel(long double) __pure2;
 int	__isinff(float) __pure2;
+int     __isinf(double) __pure2;
 int	__isinfl(long double) __pure2;
-int	__isnanf(float) __pure2;
 int	__isnanl(long double) __pure2;
 int	__isnormalf(float) __pure2;
 int	__isnormal(double) __pure2;
@@ -215,7 +230,7 @@ double	fmod(double, double);
 /*
  * These functions are not in C90.
  */
-#if __BSD_VISIBLE || __ISO_C_VISIBLE >= 1999 || __XSI_VISIBLE
+/* #if __BSD_VISIBLE || __ISO_C_VISIBLE >= 1999 || __XSI_VISIBLE */
 double	acosh(double);
 double	asinh(double);
 double	atanh(double);
@@ -227,13 +242,12 @@ double	expm1(double);
 double	fma(double, double, double);
 double	hypot(double, double);
 int	ilogb(double) __pure2;
-int	(isinf)(double) __pure2;
+/* int	(isinf)(double) __pure2; */
 int	(isnan)(double) __pure2;
 double	lgamma(double);
 long long llrint(double);
 long long llround(double);
 double	log1p(double);
-double	log2(double);
 double	logb(double);
 long	lrint(double);
 long	lround(double);
@@ -242,26 +256,23 @@ double	nextafter(double, double);
 double	remainder(double, double);
 double	remquo(double, double, int *);
 double	rint(double);
-#endif /* __BSD_VISIBLE || __ISO_C_VISIBLE >= 1999 || __XSI_VISIBLE */
+/* #endif */ /* __BSD_VISIBLE || __ISO_C_VISIBLE >= 1999 || __XSI_VISIBLE */
 
-#if __BSD_VISIBLE || __XSI_VISIBLE
+/* #if __BSD_VISIBLE || __XSI_VISIBLE */
 double	j0(double);
 double	j1(double);
 double	jn(int, double);
+double	scalb(double, double);
 double	y0(double);
 double	y1(double);
 double	yn(int, double);
 
-#if __XSI_VISIBLE <= 500 || __BSD_VISIBLE
+/* #if __XSI_VISIBLE <= 500 || __BSD_VISIBLE */
 double	gamma(double);
-#endif
+/* #endif */
+/* #endif */ /* __BSD_VISIBLE || __XSI_VISIBLE */
 
-#if __XSI_VISIBLE <= 600 || __BSD_VISIBLE
-double	scalb(double, double);
-#endif
-#endif /* __BSD_VISIBLE || __XSI_VISIBLE */
-
-#if __BSD_VISIBLE || __ISO_C_VISIBLE >= 1999
+/* #if __BSD_VISIBLE || __ISO_C_VISIBLE >= 1999 */
 double	copysign(double, double) __pure2;
 double	fdim(double, double);
 double	fmax(double, double) __pure2;
@@ -272,12 +283,12 @@ double	scalbln(double, long);
 double	scalbn(double, int);
 double	tgamma(double);
 double	trunc(double);
-#endif
+/* #endif */
 
 /*
  * BSD math library entry points
  */
-#if __BSD_VISIBLE
+/* #if __BSD_VISIBLE */
 double	drem(double, double);
 int	finite(double) __pure2;
 int	isnanf(float) __pure2;
@@ -293,10 +304,10 @@ double	lgamma_r(double, int *);
  * IEEE Test Vector
  */
 double	significand(double);
-#endif /* __BSD_VISIBLE */
+/* #endif */ /* __BSD_VISIBLE */
 
 /* float versions of ANSI/POSIX functions */
-#if __ISO_C_VISIBLE >= 1999
+/*#if __ISO_C_VISIBLE >= 1999 */
 float	acosf(float);
 float	asinf(float);
 float	atanf(float);
@@ -317,7 +328,6 @@ int	ilogbf(float) __pure2;
 float	ldexpf(float, int);
 float	log10f(float);
 float	log1pf(float);
-float	log2f(float);
 float	logf(float);
 float	modff(float, float *);	/* fundamentally !__pure2 */
 
@@ -360,12 +370,12 @@ float	fdimf(float, float);
 float	fmaf(float, float, float);
 float	fmaxf(float, float) __pure2;
 float	fminf(float, float) __pure2;
-#endif
+/* #endif */
 
 /*
  * float versions of BSD math library entry points
  */
-#if __BSD_VISIBLE
+/* #if __BSD_VISIBLE */
 float	dremf(float, float);
 int	finitef(float) __pure2;
 float	gammaf(float);
@@ -389,92 +399,98 @@ float	lgammaf_r(float, int *);
  * float version of IEEE Test Vector
  */
 float	significandf(float);
-#endif	/* __BSD_VISIBLE */
+/* #endif */	/* __BSD_VISIBLE */ 
 
 /*
  * long double versions of ISO/POSIX math functions
  */
-#if __ISO_C_VISIBLE >= 1999
+/* #if __ISO_C_VISIBLE >= 1999 */
+#if 0
+long double	acoshl(long double);
 long double	acosl(long double);
+long double	asinhl(long double);
 long double	asinl(long double);
 long double	atan2l(long double, long double);
+long double	atanhl(long double);
 long double	atanl(long double);
 long double	cbrtl(long double);
+#endif
 long double	ceill(long double);
 long double	copysignl(long double, long double) __pure2;
+#if 0
+long double	coshl(long double);
 long double	cosl(long double);
+long double	erfcl(long double);
+long double	erfl(long double);
 long double	exp2l(long double);
 long double	expl(long double);
+long double	expm1l(long double);
+#endif
 long double	fabsl(long double) __pure2;
 long double	fdiml(long double, long double);
 long double	floorl(long double);
 long double	fmal(long double, long double, long double);
 long double	fmaxl(long double, long double) __pure2;
 long double	fminl(long double, long double) __pure2;
+#if 0
 long double	fmodl(long double, long double);
+#endif
 long double	frexpl(long double value, int *); /* fundamentally !__pure2 */
+#if 0
 long double	hypotl(long double, long double);
+#endif
 int		ilogbl(long double) __pure2;
 long double	ldexpl(long double, int);
+#if 0
+long double	lgammal(long double);
 long long	llrintl(long double);
+#endif
 long long	llroundl(long double);
+#if 0
+long double	log10l(long double);
+long double	log1pl(long double);
+long double	log2l(long double);
 long double	logbl(long double);
+long double	logl(long double);
 long		lrintl(long double);
+#endif
 long		lroundl(long double);
+#if 0
 long double	modfl(long double, long double *); /* fundamentally !__pure2 */
 long double	nanl(const char *) __pure2;
 long double	nearbyintl(long double);
+#endif
 long double	nextafterl(long double, long double);
 double		nexttoward(double, long double);
 float		nexttowardf(float, long double);
 long double	nexttowardl(long double, long double);
+#if 0
+long double	powl(long double, long double);
 long double	remainderl(long double, long double);
 long double	remquol(long double, long double, int *);
 long double	rintl(long double);
+#endif
 long double	roundl(long double);
 long double	scalblnl(long double, long);
 long double	scalbnl(long double, int);
+#if 0
+long double	sinhl(long double);
 long double	sinl(long double);
 long double	sqrtl(long double);
+long double	tanhl(long double);
 long double	tanl(long double);
+long double	tgammal(long double);
+#endif
 long double	truncl(long double);
 
-#endif /* __ISO_C_VISIBLE >= 1999 */
+/* BIONIC: GLibc compatibility - required by the ARM toolchain */
+#ifdef _GNU_SOURCE
+void  sincos(double x, double *sin, double *cos);
+void  sincosf(float x, float *sin, float *cos);
+void  sincosl(long double x, long double *sin, long double *cos);
+#endif
+
+/* #endif */ /* __ISO_C_VISIBLE >= 1999 */
 __END_DECLS
 
 #endif /* !_MATH_H_ */
-
-/* separate header for cmath */
-#ifndef _MATH_EXTRA_H_
-#if __ISO_C_VISIBLE >= 1999
-#if _DECLARE_C99_LDBL_MATH
-
-#define _MATH_EXTRA_H_
-
-/*
- * extra long double versions of math functions for C99 and cmath
- */
-__BEGIN_DECLS
-
-long double	acoshl(long double);
-long double	asinhl(long double);
-long double	atanhl(long double);
-long double	coshl(long double);
-long double	erfcl(long double);
-long double	erfl(long double);
-long double	expm1l(long double);
-long double	lgammal(long double);
-long double	log10l(long double);
-long double	log1pl(long double);
-long double	log2l(long double);
-long double	logl(long double);
-long double	powl(long double, long double);
-long double	sinhl(long double);
-long double	tanhl(long double);
-long double	tgammal(long double);
-
-__END_DECLS
-
-#endif /* !_DECLARE_C99_LDBL_MATH */
-#endif /* __ISO_C_VISIBLE >= 1999 */
-#endif /* !_MATH_EXTRA_H_ */
