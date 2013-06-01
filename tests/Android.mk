@@ -46,8 +46,16 @@ include $(BUILD_EXECUTABLE)
 # Unit tests.
 # -----------------------------------------------------------------------------
 
+test_c_flags = \
+    -fstack-protector-all \
+    -g \
+    -Wall -Wextra \
+    -Werror \
+    -fno-builtin \
+
 test_src_files = \
     getcwd_test.cpp \
+    math_test.cpp \
     pthread_test.cpp \
     regex_test.cpp \
     string_test.cpp \
