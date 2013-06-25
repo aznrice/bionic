@@ -869,9 +869,8 @@ ifeq ($(TARGET_ARCH),arm)
 	LOCAL_SRC_FILES := \
 		arch-arm/bionic/crtbegin_so.c \
 		arch-arm/bionic/atexit_legacy.c \
-		arch-arm/bionic/bzero.S \
-		arch-arm/bionic/crtend_so.S \
-		$(LOCAL_SRC_FILES)
+		$(LOCAL_SRC_FILES) \
+		arch-arm/bionic/crtend_so.S
 endif
 
 LOCAL_MODULE:= libc
