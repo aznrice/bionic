@@ -1535,8 +1535,8 @@ static bool soinfo_link_image(soinfo* si) {
          */
 //TODO: Create a new module tag for vendor libraries so we may easily
 //blacklist all proprietary libraries from text relocation warnings
-#ifdef BUILD_VARIANT_USERDEBUG
-       DL_WARN("%s has text relocations. This is wasting memory and is "
+#ifdef DEBUG_TEXT_RELOCATION
+        DL_WARN("%s has text relocations. This is wasting memory and is "
                 "a security risk. Please fix.", si->name);
 #endif
         if (phdr_table_unprotect_segments(si->phdr, si->phnum, si->load_bias) < 0) {
