@@ -38,8 +38,8 @@ ifeq ($(TARGET_ARCH),mips)
     LOCAL_CFLAGS += -DANDROID_MIPS_LINKER
 endif
 
-ifeq ($(TARGET_BUILD_VARIANT),userdebug)
-    LOCAL_CFLAGS += -DBUILD_VARIANT_USERDEBUG
+ifneq ($(filter userdebug codefirex, $(TARGET_BUILD_VARIANT)),)
+    LOCAL_CFLAGS += -DDEBUG_TEXT_RELOCATION
 endif
 
 LOCAL_MODULE:= linker
