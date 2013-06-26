@@ -9,7 +9,6 @@ libc_common_src_files := \
 	unistd/alarm.c \
 	unistd/exec.c \
 	unistd/fnmatch.c \
-	unistd/getopt_long.c \
 	unistd/syslog.c \
 	unistd/system.c \
 	unistd/time.c \
@@ -150,6 +149,7 @@ libc_common_src_files := \
 	bionic/strntoumax.c \
 	bionic/strtotimeval.c \
 	bionic/system_properties.c \
+	bionic/system_properties_compat.c \
 	bionic/tcgetpgrp.c \
 	bionic/tcsetpgrp.c \
 	bionic/thread_atexit.c \
@@ -279,6 +279,7 @@ libc_upstream_freebsd_src_files := \
     upstream-freebsd/lib/libc/stdio/tempnam.c \
     upstream-freebsd/lib/libc/stdio/tmpnam.c \
     upstream-freebsd/lib/libc/stdio/wsetup.c \
+    upstream-freebsd/lib/libc/stdlib/getopt_long.c \
     upstream-freebsd/lib/libc/stdlib/qsort.c \
     upstream-freebsd/lib/libc/stdlib/realpath.c \
     upstream-freebsd/lib/libc/string/wcpcpy.c \
