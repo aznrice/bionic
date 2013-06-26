@@ -1,5 +1,6 @@
 $(call libc-add-cpu-variant-src,MEMCPY,arch-arm/krait/bionic/memcpy.S)
 $(call libc-add-cpu-variant-src,MEMSET,arch-arm/krait/bionic/memset.S)
+$(call libc-add-cpu-variant-src,STRCHR,arch-arm/cortex-a9/bionic/strchr.S)
 $(call libc-add-cpu-variant-src,STRCMP,arch-arm/krait/bionic/strcmp.S)
 $(call libc-add-cpu-variant-src,__STRCAT_CHK,arch-arm/krait/bionic/__strcat_chk.S)
 $(call libc-add-cpu-variant-src,__STRCPY_CHK,arch-arm/krait/bionic/__strcpy_chk.S)
