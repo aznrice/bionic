@@ -41,15 +41,48 @@
 #include <sys/cdefs.h>
 #include <sys/types.h>
 
+/* va_list and size_t must be defined by stdio.h according to Posix */
+#define __need___va_list
 #include <stdarg.h>
 #include <stddef.h>
 
 #define __need_NULL
+/* note that this forces stddef.h to *only* define size_t */
+#define __need_size_t
 #include <stddef.h>
 
 #define	_FSTDIO			/* Define for new stdio with functions. */
 
+#ifndef _SSIZE_T_DEFINED_
+#define _SSIZE_T_DEFINED_
+typedef unsigned long    ssize_t;
+#endif
+
+#ifndef NULL
+#ifdef  __GNUG__
+#define NULL    __null
+#else
+#define NULL    0L
+#endif
+#endif
+
+#ifndef _OFF_T_DEFINED_
+#define _OFF_T_DEFINED_
+typedef long    off_t;
+#endif
+
 typedef off_t fpos_t;		/* stdio file position type */
+
+#ifndef __GNUC_VA_LIST
+#define __GNUC_VA_LIST
+typedef __builtin_va_list __gnuc_va_list;
+#endif
+
+#if defined(__GNUC__) && __GNUC__ >= 3
+typedef __builtin_va_list       __va_list;
+#else
+typedef char *                  __va_list;
+#endif
 
 /*
  * NB: to fit things in six character monocase externals, the stdio
