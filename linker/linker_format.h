@@ -25,17 +25,25 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-
 #ifndef _LINKER_FORMAT_H
 #define _LINKER_FORMAT_H
 
 #include <stdarg.h>
 #include <stddef.h>
 
-// Formatting routines for the dynamic linker's debug traces
-// We want to avoid dragging the whole C library fprintf()
-// implementation into the dynamic linker since this creates
-// issues (it uses malloc()/free()) and increases code size.
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Formatting routines for the dynamic linker's debug traces */
+/* We want to avoid dragging the whole C library fprintf()   */
+/* implementation into the dynamic linker since this creates */
+/* issues (it uses malloc()/free()) and increases code size  */
+
 int format_buffer(char *buffer, size_t bufsize, const char *format, ...);
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif /* _LINKER_FORMAT_H */

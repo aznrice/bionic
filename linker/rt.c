@@ -28,8 +28,9 @@
 
 /*
  * This function is an empty stub where GDB locates a breakpoint to get notified
- * about linker activity.  It canʼt be inlined away, can't be hidden.
+ * about linker activity.  It canʼt be inlined away, canʼt be hidden.
  */
-extern "C" void __attribute__((noinline)) __attribute__((visibility("default"))) rtld_db_dlactivity() {
+void __attribute__((noinline)) __attribute__((visibility("default"))) rtld_db_dlactivity(void)
+{
 }
 

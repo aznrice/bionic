@@ -34,6 +34,9 @@
 #include <elf.h>
 #include <sys/exec_elf.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <link.h>
 
 #undef PAGE_MASK
@@ -86,6 +89,8 @@ struct r_debug
     uintptr_t r_ldbase;
 };
 
+typedef struct soinfo soinfo;
+
 #define FLAG_LINKED     0x00000001
 #define FLAG_ERROR      0x00000002
 #define FLAG_EXE        0x00000004 // The main executable
@@ -93,7 +98,8 @@ struct r_debug
 
 #define SOINFO_NAME_LEN 128
 
-struct soinfo {
+struct soinfo
+{
     char name[SOINFO_NAME_LEN];
     const Elf32_Phdr *phdr;
     int phnum;
@@ -226,6 +232,8 @@ Elf32_Sym *soinfo_find_symbol(soinfo* si, const void *addr);
 Elf32_Sym *soinfo_lookup(soinfo *si, const char *name);
 void soinfo_call_constructors(soinfo *si);
 
-extern "C" void notify_gdb_of_libraries();
+#ifdef __cplusplus
+};
+#endif
 
 #endif
