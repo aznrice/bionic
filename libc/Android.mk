@@ -383,21 +383,13 @@ libc_common_src_files += \
         arch-arm/bionic/memset.S \
 	arch-arm/bionic/setjmp.S \
 	arch-arm/bionic/sigsetjmp.S \
+	arch-arm/bionic/strcmp.S \
         arch-arm/bionic/strchr.S \
         arch-arm/bionic/strcpy.c \
         arch-arm/bionic/strlen.S \
 	arch-arm/bionic/syscall.S \
 	string/strncmp.c \
 	unistd/socketcalls.c
-
-ifeq ($(TARGET_USE_KRAIT_BIONIC_OPTIMIZATION), true)
-
- libc_common_src_files += \
-	arch-arm/bionic/strcmp-krait.S
-else
- libc_common_src_files += \
-	arch-arm/bionic/strcmp.S
-endif
 
 # If the kernel supports kernel user helpers for gettimeofday, use
 # that instead.
