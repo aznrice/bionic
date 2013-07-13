@@ -645,6 +645,7 @@ endif
 
 # crtbrand.c needs <stdint.h> and a #define for the platform SDK version.
 libc_crt_target_cflags += \
+    -m32 \
     -I$(LOCAL_PATH)/include  \
     -DPLATFORM_SDK_VERSION=$(PLATFORM_SDK_VERSION)
 
@@ -755,7 +756,7 @@ ALL_GENERATED_SOURCES += $(GEN)
 GEN := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
 $(GEN): $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static1.o $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbrand.o
 	@mkdir -p $(dir $@)
-	$(hide) $(TARGET_LD) -r -o $@ $^
+	$(hide) $(TARGET_LD) -m elf_i386 -r -o $@ $^
 ALL_GENERATED_SOURCES += $(GEN)
 
 GEN := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic1.o
@@ -770,7 +771,7 @@ ALL_GENERATED_SOURCES += $(GEN)
 GEN := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic.o
 $(GEN): $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic1.o $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbrand.o
 	@mkdir -p $(dir $@)
-	$(hide) $(TARGET_LD) -r -o $@ $^
+	$(hide) $(TARGET_LD) -m elf_i386 -r -o $@ $^
 ALL_GENERATED_SOURCES += $(GEN)
 
 # We rename crtend.o to crtend_android.o to avoid a
