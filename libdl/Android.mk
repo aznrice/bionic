@@ -27,6 +27,9 @@ LOCAL_SRC_FILES:= libdl.c
 LOCAL_MODULE:= libdl
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
+# Disable link time optimization here so we may enable it globally
+LOCAL_CFLAGS += -fno-lto
+
 # NOTE: libdl needs __aeabi_unwind_cpp_pr0 from libgcc.a but libgcc.a needs a
 # few symbols from libc. Using --no-undefined here results in having to link
 # against libc creating a circular dependency which is removed and we end up
@@ -52,6 +55,9 @@ LOCAL_MODULE:= dltest
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
 LOCAL_SHARED_LIBRARIES := libdl
+
+# Disable link time optimization here so we may enable it globally
+LOCAL_CFLAGS += -fno-lto
 
 include $(BUILD_EXECUTABLE)
 
