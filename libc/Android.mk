@@ -502,10 +502,6 @@ libc_common_cflags := \
     -DLOG_ON_HEAP_ERROR \
     -Wall -Wextra
 
-# TEMP: disable strict aliasing to workaround
-# tricky code in netbsd
-libc_common_cflags += -fno-strict-aliasing
-
 ifeq ($(strip $(DEBUG_BIONIC_LIBC)),true)
   libc_common_cflags += -DDEBUG
 endif
