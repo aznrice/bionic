@@ -706,6 +706,7 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := bionic/__stack_chk_fail.cpp
 LOCAL_CFLAGS := $(libc_common_cflags) -fno-stack-protector -Werror
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
+LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libbionic_ssp
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_SYSTEM_SHARED_LIBRARIES :=
@@ -751,6 +752,7 @@ LOCAL_CFLAGS := \
     -I$(LOCAL_PATH)/upstream-freebsd/libc/include \
     -include upstream-freebsd/freebsd-compat.h
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
+LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libc_freebsd
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_SYSTEM_SHARED_LIBRARIES :=
@@ -774,6 +776,7 @@ LOCAL_CFLAGS := \
     -I$(LOCAL_PATH)/upstream-netbsd/libc/include \
     -include upstream-netbsd/netbsd-compat.h
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
+LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libc_netbsd
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_SYSTEM_SHARED_LIBRARIES :=
@@ -790,6 +793,7 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(libc_bionic_src_files)
 LOCAL_CFLAGS := $(libc_common_cflags) -Werror
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
+LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libc_bionic
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_SYSTEM_SHARED_LIBRARIES :=
@@ -808,6 +812,7 @@ LOCAL_CFLAGS := $(libc_common_cflags) \
     -std=gnu99 \
     -I$(LOCAL_PATH)/upstream-netbsd/libc/include # for netbsd private headers
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
+LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libc_common
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_WHOLE_STATIC_LIBRARIES := \
@@ -846,6 +851,7 @@ LOCAL_CFLAGS := $(libc_common_cflags) \
                 -DLIBC_STATIC \
                 -std=gnu99
 
+LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libc_nomalloc
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_WHOLE_STATIC_LIBRARIES := libc_common
@@ -870,6 +876,7 @@ LOCAL_CFLAGS := $(libc_common_cflags) \
                 -DLIBC_STATIC \
                 -std=gnu99
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
+LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libc
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_WHOLE_STATIC_LIBRARIES := libc_common
@@ -911,6 +918,7 @@ ifeq ($(TARGET_ARCH),arm)
 		arch-arm/bionic/crtend_so.S
 endif
 
+LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE:= libc
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_REQUIRED_MODULES := tzdata
@@ -955,6 +963,7 @@ LOCAL_SRC_FILES := \
 	bionic/malloc_debug_leak.cpp \
 	bionic/malloc_debug_check.cpp \
 
+LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE:= libc_malloc_debug_leak
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
@@ -983,6 +992,7 @@ LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_SRC_FILES := \
 	bionic/malloc_debug_qemu.cpp
 
+LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE:= libc_malloc_debug_qemu
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
