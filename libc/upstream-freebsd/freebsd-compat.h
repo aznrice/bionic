@@ -20,11 +20,38 @@
 #define __USE_BSD
 #define REPLACE_GETOPT
 
+/*
+ * The following serve a reverse function of the upstream FreeBSD namespace.h definitions.
+ * Needed as long as we have a mix of OpenBSD and FreeBSD stdio and stdlib.
+ */
 #define _close close
 #define _fcntl fcntl
 #define _fstat fstat
 #define _open open
+#define _sseek __sseek
+#define _pthread_mutex_destroy pthread_mutex_destroy
+#define _pthread_mutex_lock pthread_mutex_lock
+#define _pthread_mutex_unlock pthread_mutex_unlock
 
-#define _sseek __sseek /* Needed as long as we have a mix of OpenBSD and FreeBSD stdio. */
+/* Needed to workaround lack of upstream dlfcn support. */
+#pragma weak _rtld_addr_phdr
+int _rtld_addr_phdr(const void *addr, struct dl_phdr_info *phdr_info) {
+        return 0;
+}
+
+/*
+ * Needed to workaround lack of upstream elf utils and dependent support.
+ *
+ * XXX: This does not act the same as the upstream __elf_phdr_match_addr
+ * function. The sole purpose of this change is to allow atexit to always
+ * continue on the wrong DSO. Implement prior to additional __elf_phdr_match_addr
+ * usage.
+ *
+ * TODO: implement full upstream elf utils support.
+ */
+#pragma weak __elf_phdr_match_addr
+int __elf_phdr_match_addr(struct dl_phdr_info *phdr_info, void *addr) {
+        return 1;
+}
 
 #endif
