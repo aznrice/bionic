@@ -43,7 +43,6 @@ libc_common_src_files := \
 	stdio/vscanf.c \
 	stdio/vsscanf.c \
 	stdio/wbuf.c \
-	stdlib/atexit.c \
 	stdlib/ctype_.c \
 	stdlib/exit.c \
 	stdlib/getenv.c \
@@ -287,6 +286,7 @@ libc_upstream_freebsd_src_files := \
     upstream-freebsd/lib/libc/stdio/tmpnam.c \
     upstream-freebsd/lib/libc/stdio/wsetup.c \
     upstream-freebsd/lib/libc/stdlib/abs.c \
+    upstream-freebsd/lib/libc/stdlib/atexit.c \
     upstream-freebsd/lib/libc/stdlib/getopt_long.c \
     upstream-freebsd/lib/libc/stdlib/imaxabs.c \
     upstream-freebsd/lib/libc/stdlib/imaxdiv.c \
@@ -913,7 +913,6 @@ ifeq ($(TARGET_ARCH),arm)
 
 	LOCAL_SRC_FILES := \
 		arch-arm/bionic/crtbegin_so.c \
-		arch-arm/bionic/atexit_legacy.c \
 		$(LOCAL_SRC_FILES) \
 		arch-arm/bionic/crtend_so.S
 endif

@@ -25,4 +25,11 @@
 
 #define ORIENT(fp, o) /* Only needed for wide-character stream support. */
 
+/*
+ * This global flag is non-zero when a process has created one
+ * or more threads. It is used to avoid calling locking functions
+ * when they are not required.
+ */
+extern int      __isthreaded;
+
 #endif

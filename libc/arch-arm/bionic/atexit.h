@@ -26,10 +26,8 @@
  * SUCH DAMAGE.
  */
 
-extern void *__dso_handle;
-
-__attribute__ ((visibility ("hidden")))
-int atexit(void (*func)(void))
-{
-  return (__cxa_atexit((void (*)(void *))func, (void *)0, &__dso_handle));
-}
+/*
+ * The following has been left for compatibility purposes. This also
+ * allows the continued separation of upstream freebsd stdio.
+ */
+#include "../../upstream-freebsd/lib/libc/stdlib/atexit.h"
