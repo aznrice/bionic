@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 The Android Open Source Project
+ * Copyright (c) 2012 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,11 +26,34 @@
  * SUCH DAMAGE.
  */
 
-extern void *__dso_handle;
+#include <sys/types.h>
+#include <private/libc_logging.h>
+#include <stdio.h>
+
+/*
+ * This source file should only be included by libc.so, its purpose is
+ * to support legacy ARM binaries by exporting a publicly visible
+ * implementation of atexit().
+ */
+
 extern int __cxa_atexit(void (*func)(void *), void *arg, void *dso);
 
-__attribute__ ((visibility ("hidden")))
-int atexit(void (*func)(void))
+/*
+ * Register a function to be performed at exit.
+ */
+int
+atexit(void (*func)(void))
 {
-  return (__cxa_atexit((void (*)(void *))func, (void *)0, &__dso_handle));
+    /*
+     * Exit functions queued by this version of atexit will not be called
+     * on dlclose(), and when they are called (at program exit), the
+     * calling library may have been dlclose()'d, causing the program to
+     * crash.
+     */
+    static char const warning[] = "WARNING: generic atexit() called from legacy shared library\n";
+
+    __libc_format_log(ANDROID_LOG_WARN, "libc", warning);
+    fprintf(stderr, warning);
+
+    return (__cxa_atexit((void (*)(void *))func, NULL, NULL));
 }
