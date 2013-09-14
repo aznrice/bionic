@@ -508,6 +508,8 @@ libc_common_cflags := \
     -I$(LOCAL_PATH)/private \
     -DPOSIX_MISTAKE \
     -DLOG_ON_HEAP_ERROR \
+    -std=gnu11 \
+    -std=gnu++11 \
     -Wall -Wextra
 
 ifeq ($(strip $(DEBUG_BIONIC_LIBC)),true)
@@ -707,7 +709,7 @@ WITH_MALLOC_CHECK_LIBC_A := $(strip $(WITH_MALLOC_CHECK_LIBC_A))
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := bionic/__stack_chk_fail.cpp
-LOCAL_CFLAGS := $(libc_common_cflags) -fno-stack-protector -Werror
+LOCAL_CFLAGS := $(libc_common_cflags) -fno-stack-protector
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libbionic_ssp
@@ -726,7 +728,6 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(libc_tzcode_src_files)
 LOCAL_CFLAGS := \
     $(libc_common_cflags) \
-    -std=gnu99 \
     -DSTD_INSPIRED=1 \
     -DTZDIR=\"/system/usr/share/zoneinfo\" \
     -DTM_GMTOFF=tm_gmtoff \
@@ -794,7 +795,7 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := $(libc_bionic_src_files)
-LOCAL_CFLAGS := $(libc_common_cflags) -Werror
+LOCAL_CFLAGS := $(libc_common_cflags)
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libc_bionic
@@ -812,7 +813,6 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := $(libc_common_src_files)
 LOCAL_CFLAGS := $(libc_common_cflags) \
-    -std=gnu99 \
     -I$(LOCAL_PATH)/upstream-netbsd/libc/include # for netbsd private headers
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_NO_LTO_SUPPORT := true
@@ -851,8 +851,7 @@ LOCAL_SRC_FILES := \
 
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_CFLAGS := $(libc_common_cflags) \
-                -DLIBC_STATIC \
-                -std=gnu99
+                -DLIBC_STATIC
 
 LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libc_nomalloc
@@ -876,8 +875,7 @@ LOCAL_SRC_FILES := \
 	bionic/libc_init_static.cpp
 
 LOCAL_CFLAGS := $(libc_common_cflags) \
-                -DLIBC_STATIC \
-                -std=gnu99
+                -DLIBC_STATIC
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libc
@@ -899,7 +897,7 @@ include $(CLEAR_VARS)
 # Since this code is experimental it is disabled by default.
 # see libc/bionic/pthread_debug.c for details
 
-LOCAL_CFLAGS := $(libc_common_cflags) -std=gnu99 -DPTHREAD_DEBUG -DPTHREAD_DEBUG_ENABLED=0
+LOCAL_CFLAGS := $(libc_common_cflags) -DPTHREAD_DEBUG -DPTHREAD_DEBUG_ENABLED=0
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 
 LOCAL_SRC_FILES := \
