@@ -31,6 +31,7 @@
 
 ENTRY(syscall)
     mov     ip, sp
+    .save   {r4, r5, r6, r7}
     stmfd   sp!, {r4, r5, r6, r7}
     mov     r7, r0
     mov     r0, r1
