@@ -211,6 +211,21 @@ libm_common_src_files += fake_long_double.c
 
 # TODO: re-enable i387/e_sqrtf.S for x86, and maybe others.
 
+libm_common_cflags := -DFLT_EVAL_METHOD=0
+libm_common_includes := \
+    $(LOCAL_PATH)/upstream-freebsd/lib/msun/src \
+    $(LOCAL_PATH)/../libc/arch-$(TARGET_ARCH)/include
+
+libm_arm_includes := $(LOCAL_PATH)/arm
+libm_arm_src_files := arm/fenv.c
+
+libm_x86_includes := $(LOCAL_PATH)/i386 $(LOCAL_PATH)/i387
+libm_x86_src_files := i387/fenv.c
+
+libm_mips_cflags := -fno-builtin-rintf -fno-builtin-rint
+libm_mips_includes := $(LOCAL_PATH)/mips
+libm_mips_src_files := mips/fenv.c
+
 ifneq ($(TARGET_ARCH),arm)
   libm_common_src_files += \
       upstream-freebsd/lib/msun/src/e_sqrt.c \
@@ -227,22 +242,12 @@ else # ARM
       arm/s_fmaf.S \
       arm/s_lrint.S \
       arm/s_lrintf.S
+  ifeq ($(ARCH_ARM_HAVE_NEON),true)
+    libm_common_src_files += \
+        arm/e_pow.S
+    libm_common_cflags += -D__NEON__ -fno-if-conversion
+  endif
 endif
-
-libm_common_cflags := -DFLT_EVAL_METHOD=0
-libm_common_includes := \
-    $(LOCAL_PATH)/upstream-freebsd/lib/msun/src \
-    $(LOCAL_PATH)/../libc/arch-$(TARGET_ARCH)/include
-
-libm_arm_includes := $(LOCAL_PATH)/arm
-libm_arm_src_files := arm/fenv.c
-
-libm_x86_includes := $(LOCAL_PATH)/i386 $(LOCAL_PATH)/i387
-libm_x86_src_files := i387/fenv.c
-
-libm_mips_cflags := -fno-builtin-rintf -fno-builtin-rint
-libm_mips_includes := $(LOCAL_PATH)/mips
-libm_mips_src_files := mips/fenv.c
 
 #
 # libm.a for target.
