@@ -496,14 +496,11 @@ libc_arch_dynamic_src_files := $(_LIBC_ARCH_DYNAMIC_SRC_FILES)
 # Define some common cflags
 # ========================================================
 libc_common_cflags := \
-    -DWITH_ERRLIST \
     -DANDROID_CHANGES \
     -D_LIBC=1 \
-    -DFLOATING_POINT \
     -DINET6 \
     -I$(LOCAL_PATH)/private \
     -DPOSIX_MISTAKE \
-    -DLOG_ON_HEAP_ERROR \
     -std=gnu11 \
     -std=gnu++11 \
     -Wall -Wextra
