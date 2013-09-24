@@ -62,8 +62,6 @@ libm_common_src_files += \
     upstream-freebsd/lib/msun/src/e_scalbf.c \
     upstream-freebsd/lib/msun/src/e_sinh.c \
     upstream-freebsd/lib/msun/src/e_sinhf.c \
-    upstream-freebsd/lib/msun/src/e_sqrt.c \
-    upstream-freebsd/lib/msun/src/e_sqrtf.c \
     upstream-freebsd/lib/msun/src/k_cos.c \
     upstream-freebsd/lib/msun/src/k_cosf.c \
     upstream-freebsd/lib/msun/src/k_exp.c \
@@ -217,8 +215,20 @@ libm_common_src_files += fake_long_double.c
 
 # TODO: re-enable i387/e_sqrtf.S for x86, and maybe others.
 
+ifneq ($(TARGET_ARCH),arm)
+  libm_common_src_files += \
+      upstream-freebsd/lib/msun/src/e_sqrt.c \
+      upstream-freebsd/lib/msun/src/e_sqrtf.c
+else # ARM
+  libm_common_src_files += \
+      arm/e_sqrt.S \
+      arm/e_sqrtf.S
+endif
+
 libm_common_cflags := -DFLT_EVAL_METHOD=0
-libm_common_includes := $(LOCAL_PATH)/upstream-freebsd/lib/msun/src/
+libm_common_includes := \
+    $(LOCAL_PATH)/upstream-freebsd/lib/msun/src \
+    $(LOCAL_PATH)/../libc/arch-$(TARGET_ARCH)/include
 
 libm_arm_includes := $(LOCAL_PATH)/arm
 libm_arm_src_files := arm/fenv.c
