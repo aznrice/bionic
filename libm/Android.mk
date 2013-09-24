@@ -116,8 +116,6 @@ libm_common_src_files += \
     upstream-freebsd/lib/msun/src/s_finitef.c \
     upstream-freebsd/lib/msun/src/s_floor.c \
     upstream-freebsd/lib/msun/src/s_floorf.c \
-    upstream-freebsd/lib/msun/src/s_fma.c \
-    upstream-freebsd/lib/msun/src/s_fmaf.c \
     upstream-freebsd/lib/msun/src/s_fmax.c \
     upstream-freebsd/lib/msun/src/s_fmaxf.c \
     upstream-freebsd/lib/msun/src/s_fmin.c \
@@ -219,10 +217,14 @@ ifneq ($(TARGET_ARCH),arm)
   libm_common_src_files += \
       upstream-freebsd/lib/msun/src/e_sqrt.c \
       upstream-freebsd/lib/msun/src/e_sqrtf.c
+      upstream-freebsd/lib/msun/src/s_fma.c \
+      upstream-freebsd/lib/msun/src/s_fmaf.c
 else # ARM
   libm_common_src_files += \
       arm/e_sqrt.S \
-      arm/e_sqrtf.S
+      arm/e_sqrtf.S \
+      arm/s_fma.S \
+      arm/s_fmaf.S
 endif
 
 libm_common_cflags := -DFLT_EVAL_METHOD=0
