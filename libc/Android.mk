@@ -505,8 +505,10 @@ libc_common_cflags := \
     -I$(LOCAL_PATH)/private \
     -DPOSIX_MISTAKE \
     -std=gnu11 \
-    -std=gnu++11 \
     -Wall -Wextra
+
+libc_common_cppflags := \
+    -std=gnu++11
 
 ifeq ($(strip $(DEBUG_BIONIC_LIBC)),true)
   libc_common_cflags += -DDEBUG
@@ -705,7 +707,8 @@ WITH_MALLOC_CHECK_LIBC_A := $(strip $(WITH_MALLOC_CHECK_LIBC_A))
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := bionic/__stack_chk_fail.cpp
-LOCAL_CFLAGS := $(libc_common_cflags) -fno-stack-protector
+LOCAL_CFLAGS := $(libc_common_cflags) -fno-stack-protector -Werror
+LOCAL_CPPFLAGS := $(libc_common_cppflags)
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libbionic_ssp
@@ -791,7 +794,8 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := $(libc_bionic_src_files)
-LOCAL_CFLAGS := $(libc_common_cflags)
+LOCAL_CFLAGS := $(libc_common_cflags) -Werror
+LOCAL_CPPFLAGS := $(libc_common_cppflags)
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libc_bionic
@@ -810,6 +814,7 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(libc_common_src_files)
 LOCAL_CFLAGS := $(libc_common_cflags) \
     -I$(LOCAL_PATH)/upstream-netbsd/libc/include # for netbsd private headers
+LOCAL_CPPFLAGS := $(libc_common_cppflags)
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libc_common
@@ -848,6 +853,7 @@ LOCAL_SRC_FILES := \
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_CFLAGS := $(libc_common_cflags) \
                 -DLIBC_STATIC
+LOCAL_CPPFLAGS := $(libc_common_cppflags)
 
 LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libc_nomalloc
@@ -872,6 +878,7 @@ LOCAL_SRC_FILES := \
 
 LOCAL_CFLAGS := $(libc_common_cflags) \
                 -DLIBC_STATIC
+LOCAL_CPPFLAGS := $(libc_common_cppflags)
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_NO_LTO_SUPPORT := true
 LOCAL_MODULE := libc
@@ -894,6 +901,7 @@ include $(CLEAR_VARS)
 # see libc/bionic/pthread_debug.c for details
 
 LOCAL_CFLAGS := $(libc_common_cflags) -DPTHREAD_DEBUG -DPTHREAD_DEBUG_ENABLED=0
+LOCAL_CPPFLAGS := $(libc_common_cppflags)
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 
 LOCAL_SRC_FILES := \
@@ -950,6 +958,7 @@ include $(CLEAR_VARS)
 LOCAL_CFLAGS := \
 	$(libc_common_cflags) \
 	-DMALLOC_LEAK_CHECK
+LOCAL_CPPFLAGS := $(libc_common_cppflags)
 
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 
