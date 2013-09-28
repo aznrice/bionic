@@ -234,7 +234,7 @@ libm_mips_src_files := mips/fenv.c
 
 libm_generic_src_files := \
     upstream-freebsd/lib/msun/src/e_sqrt.c \
-    upstream-freebsd/lib/msun/src/e_sqrtf.c
+    upstream-freebsd/lib/msun/src/e_sqrtf.c \
     upstream-freebsd/lib/msun/src/s_fma.c \
     upstream-freebsd/lib/msun/src/s_fmaf.c \
     upstream-freebsd/lib/msun/src/s_lrint.c \
@@ -256,7 +256,9 @@ else # ARM NEON
     libm_common_src_files += $(libm_arm_neon_optimized_src_files)
     libm_common_cflags += -D__NEON__ -fno-if-conversion
   else # s600
-    libm_common_src_files += $(libm_generic_src_files)
+    libm_common_src_files += $(libm_generic_src_files) \
+        arm/e_pow.S
+    libm_common_cflags += -D__NEON__ -fno-if-conversion
   endif
 endif
 
