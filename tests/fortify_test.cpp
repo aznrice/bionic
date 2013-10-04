@@ -20,6 +20,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
+#include <malloc.h>
 
 // We have to say "DeathTest" here so gtest knows to run this test (which exits)
 // in its own process. Unfortunately, the C preprocessor doesn't give us an
@@ -395,6 +396,19 @@ TEST(DEATHTEST, sprintf_fortified) {
   ASSERT_EXIT(sprintf(buf, "%s", source_buf), testing::KilledBySignal(SIGABRT), "");
 }
 
+#ifndef __clang__
+// This test is disabled in clang because clang doesn't properly detect
+// this buffer overflow. TODO: Fix clang.
+TEST(DEATHTEST, sprintf_malloc_fortified) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  char* buf = (char *) malloc(10);
+  char source_buf[11];
+  memcpy(source_buf, "1234567890", 11);
+  ASSERT_EXIT(sprintf(buf, "%s", source_buf), testing::KilledBySignal(SIGABRT), "");
+  free(buf);
+}
+#endif
+
 TEST(DEATHTEST, sprintf2_fortified) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   char buf[5];
@@ -531,6 +545,13 @@ TEST(DEATHTEST, recv_fortified) {
   size_t data_len = atoi("11"); // suppress compiler optimizations
   char buf[10];
   ASSERT_EXIT(recv(0, buf, data_len, 0), testing::KilledBySignal(SIGABRT), "");
+}
+
+TEST(DEATHTEST, FD_ISSET_fortified) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  fd_set set;
+  memset(&set, 0, sizeof(set));
+  ASSERT_EXIT(FD_ISSET(-1, &set), testing::KilledBySignal(SIGABRT), "");
 }
 
 extern "C" char* __strncat_chk(char*, const char*, size_t, size_t);
