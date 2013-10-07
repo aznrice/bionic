@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,11 @@
  * SUCH DAMAGE.
  */
 
-#if defined(__linux__) && defined(__ELF__)
-	.section .note.GNU-stack,"",%progbits
+#ifdef __LP64__
+# define ASM_PTR_SIZE(x) .quad x
+# define ASM_ALIGN(x)
+#else
+# define ASM_PTR_SIZE(x) .long x
+# define ASM_ALIGN(x)    .align x
 #endif
+

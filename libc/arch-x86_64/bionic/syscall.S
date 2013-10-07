@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,13 +25,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-	
-	.section .preinit_array, "aw"
-	.long 0
 
-	.section .init_array, "aw"
-	.long 0
+/*
+ * Generic syscall call.
+ * Upon entry:
+ *   %rax: system call number
+ *   %rdi: arg0 to system call
+ *   %rsi: arg1
+ *   %rdx: arg2
+ *   %rcx: arg3 - syscall expects it at %r10
+ *   %r8: arg4
+ *   %r9: arg5
+ */
 
-	.section .fini_array, "aw"
-	.long 0
+#include <asm/unistd.h>
+#include <linux/err.h>
+#include <machine/asm.h>
 
+ENTRY(syscall)
+    # All arguments are passed via registers.
+    # (Not all will be valid, depending on the syscall.)
+    mov     %edi, %eax
+    mov     %rsi, %rdi
+    mov     %rdx, %rsi
+    mov     %rcx, %rdx
+    mov     %r8,  %r10
+    mov     %r9,  %r8
+    mov     8(%rsp), %r9
+
+    # Make the system call.
+    syscall
+    cmpq    $-MAX_ERRNO, %rax
+    jb      1f
+    negl    %eax
+    movl    %eax, %edi
+    call    __set_errno
+    orq     $-1, %rax
+1:
+    ret

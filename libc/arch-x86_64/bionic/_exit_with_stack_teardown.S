@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,31 +26,31 @@
  * SUCH DAMAGE.
  */
 
-#include "../../bionic/libc_init_common.h"
-#include <stddef.h>
-#include <stdint.h>
+#include <asm/unistd.h>
+#include <machine/asm.h>
+/*
+ * void _exit_with_stack_teardown(void *stackBase, int stackSize, int *retCode)
+ */
 
-__attribute__ ((section (".preinit_array")))
-void (*__PREINIT_ARRAY__)(void) = (void (*)(void)) -1;
+ENTRY(_exit_with_stack_teardown)
+    /* we can trash %rbx here since this call should never return. */
+    /* We can also take advantage of the fact that the linux syscall trap
+     * handler saves all the registers, so we don't need a stack to keep
+     * the retCode argument for exit while doing the munmap */
 
-__attribute__ ((section (".init_array")))
-void (*__INIT_ARRAY__)(void) = (void (*)(void)) -1;
+    /* TODO(dmtriyz): No one expects this code to return, so even if
+     * munmap fails, we have to exit. This should probably be fixed, but
+     * since ARM side does the same thing, leave it as is.
+     */
 
-__attribute__ ((section (".fini_array")))
-void (*__FINI_ARRAY__)(void) = (void (*)(void)) -1;
-
-__LIBC_HIDDEN__
-__attribute__((force_align_arg_pointer))
-void _start() {
-  structors_array_t array;
-  array.preinit_array = &__PREINIT_ARRAY__;
-  array.init_array = &__INIT_ARRAY__;
-  array.fini_array = &__FINI_ARRAY__;
-
-  void* raw_args = (void*) ((uintptr_t) __builtin_frame_address(0) + sizeof(void*));
-  __libc_init(raw_args, NULL, &main, &array);
-}
-
-#include "__dso_handle.h"
-#include "atexit.h"
-#include "__stack_chk_fail_local.h"
+    /* args passed through registers */
+    mov     $__NR_munmap, %eax        /* shouldn't change %rdx (retCode) */
+    syscall
+    mov     %rdx, %rdi                /* retrieve the retCode */
+    mov     $__NR_exit, %eax
+    syscall
+    /* exit does not return */
+    /* can't have a ret here since we no longer have a usable stack. Seems
+     * that presently, 'hlt' will cause the program to segfault.. but this
+     * should never happen :) */
+    hlt
