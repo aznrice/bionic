@@ -48,6 +48,7 @@ libc_common_src_files := \
 	stdio/vscanf.c \
 	stdio/vsscanf.c \
 	stdio/wbuf.c \
+	stdlib/atexit.c \
 	stdlib/ctype_.c \
 	stdlib/_Exit.c \
 	stdlib/exit.c \
@@ -307,7 +308,6 @@ libc_upstream_freebsd_src_files := \
     upstream-freebsd/lib/libc/stdio/tmpnam.c \
     upstream-freebsd/lib/libc/stdio/wsetup.c \
     upstream-freebsd/lib/libc/stdlib/abs.c \
-    upstream-freebsd/lib/libc/stdlib/atexit.c \
     upstream-freebsd/lib/libc/stdlib/getopt_long.c \
     upstream-freebsd/lib/libc/stdlib/imaxabs.c \
     upstream-freebsd/lib/libc/stdlib/imaxdiv.c \
@@ -642,14 +642,12 @@ libc_common_c_includes := \
 		$(LOCAL_PATH)/stdlib  \
 		$(LOCAL_PATH)/string  \
 		$(LOCAL_PATH)/stdio   \
-		$(LOCAL_PATH)/upstream-freebsd/lib/libc/stdlib \
 		external/safe-iop/include
 
 # Needed to access private/__dso_handle.h from
 # crtbegin_xxx.S and crtend_xxx.S
 libc_crt_target_cflags += \
     -I$(LOCAL_PATH)/private \
-    -I$(LOCAL_PATH)/upstream-freebsd/lib/libc/stdlib \
     -I$(LOCAL_PATH)/arch-$(TARGET_ARCH)/include
 
 # Define the libc run-time (crt) support object files that must be built,
@@ -1007,6 +1005,7 @@ ifeq ($(TARGET_ARCH),arm)
 
 	LOCAL_SRC_FILES := \
 		arch-arm/bionic/crtbegin_so.c \
+		arch-arm/bionic/atexit_legacy.c \
 		$(LOCAL_SRC_FILES) \
 		arch-arm/bionic/crtend_so.S
 endif
