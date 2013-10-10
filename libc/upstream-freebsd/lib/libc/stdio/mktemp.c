@@ -49,8 +49,10 @@ char *_mktemp(char *);
 
 static int _gettemp(char *, int *, int, int);
 
-static const unsigned char padchar[] =
+static const char padchar[] =
 "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+u_int32_t arc4random_uniform(u_int32_t upper_bound);
 
 int
 mkstemps(char *path, int slen)

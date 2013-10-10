@@ -41,6 +41,7 @@ __RCSID("$NetBSD: ev_timers.c,v 1.11 2012/03/21 00:34:54 christos Exp $");
 #include <isc/eventlib.h>
 #include "eventlib_p.h"
 
+#include <time.h>
 #include "port_after.h"
 
 /* Constants. */
