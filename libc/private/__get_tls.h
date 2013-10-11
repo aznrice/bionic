@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2008 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,13 +25,36 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#include <unistd.h>
-#include "cpuacct.h"
 
-extern int __setuid(uid_t);
+#ifndef __BIONIC_PRIVATE_GET_TLS_H_
+#define __BIONIC_PRIVATE_GET_TLS_H_
 
-int setuid(uid_t uid)
-{
-    cpuacct_add(uid);
-    return __setuid(uid);
-}
+#if defined(__arm__)
+# define __get_tls() \
+    ({ void** __val; \
+       __asm__("mrc p15, 0, %0, c13, c0, 3" : "=r"(__val)); \
+       __val; })
+#elif defined(__mips__)
+# define __get_tls() \
+    /* On mips32r1, this goes via a kernel illegal instruction trap that's optimized for v1. */ \
+    ({ register void** __val asm("v1"); \
+       __asm__(".set    push\n" \
+               ".set    mips32r2\n" \
+               "rdhwr   %0,$29\n" \
+               ".set    pop\n" : "=r"(__val)); \
+       __val; })
+#elif defined(__i386__)
+# define __get_tls() \
+    ({ void** __val; \
+       __asm__("movl %%gs:0, %0" : "=r"(__val)); \
+       __val; })
+#elif defined(__x86_64__)
+# define __get_tls() \
+    ({ void** __val; \
+       __asm__("mov %%fs:0, %0" : "=r"(__val)); \
+       __val; })
+#else
+#error unsupported architecture
+#endif
+
+#endif /* __BIONIC_PRIVATE_GET_TLS_H_ */

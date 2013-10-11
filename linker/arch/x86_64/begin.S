@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,10 +25,14 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#include <errno.h>
-#include <bionic_tls.h>
 
-volatile int*  __errno( void )
-{
-  return  &((volatile int*)__get_tls())[TLS_SLOT_ERRNO];
-}
+#include <machine/asm.h>
+
+ENTRY(_start)
+  /* Pass elfdata to __linker_init. */
+  mov %rsp, %rdi
+  call __linker_init
+
+  /* linker init returns (%rax) the _entry address in the main image */
+  jmp *%rax
+END(_start)

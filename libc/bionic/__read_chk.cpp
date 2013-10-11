@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,16 +26,18 @@
  * SUCH DAMAGE.
  */
 
-#ifndef _BIONIC_CPUACCT_H
-#define _BIONIC_CPUACCT_H
+#undef _FORTIFY_SOURCE
+#include <unistd.h>
+#include "private/libc_logging.h"
 
-#include <sys/cdefs.h>
-#include <sys/types.h>
+extern "C" ssize_t __read_chk(int fd, void* buf, size_t count, size_t buf_size) {
+  if (__predict_false(count > buf_size)) {
+    __fortify_chk_fail("read prevented write past end of buffer", 0);
+  }
 
-__BEGIN_DECLS
+  if (__predict_false(count > SSIZE_MAX)) {
+    __fortify_chk_fail("read count > SSIZE_MAX", 0);
+  }
 
-extern int cpuacct_add(uid_t uid);
-
-__END_DECLS
-
-#endif /* _BIONIC_CPUACCT_H */
+  return read(fd, buf, count);
+}

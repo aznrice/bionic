@@ -21,6 +21,7 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <malloc.h>
+#include <fcntl.h>
 
 // We have to say "DeathTest" here so gtest knows to run this test (which exits)
 // in its own process. Unfortunately, the C preprocessor doesn't give us an
@@ -568,6 +569,15 @@ TEST(DEATHTEST, FD_ZERO_fortified) {
   ASSERT_EXIT(FD_ZERO(set), testing::KilledBySignal(SIGABRT), "");
 }
 
+TEST(DEATHTEST, read_fortified) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  char buf[1];
+  size_t ct = atoi("2"); // prevent optimizations
+  int fd = open("/dev/null", O_RDONLY);
+  ASSERT_EXIT(read(fd, buf, ct), testing::KilledBySignal(SIGABRT), "");
+  close(fd);
+}
+
 extern "C" char* __strncat_chk(char*, const char*, size_t, size_t);
 extern "C" char* __strcat_chk(char*, const char*, size_t);
 
@@ -814,4 +824,22 @@ TEST(TEST_NAME, memcpy_chk_max_int_size) {
   ASSERT_EQ('7',  buf[7]);
   ASSERT_EQ('8',  buf[8]);
   ASSERT_EQ('\0', buf[9]);
+}
+
+// Verify that macro expansion is done properly for sprintf/snprintf (which
+// are defined as macros in stdio.h under clang).
+#define CONTENTS "macro expansion"
+#define BUF_AND_SIZE(A) A, sizeof(A)
+#define BUF_AND_CONTENTS(A) A, CONTENTS
+#define BUF_AND_SIZE_AND_CONTENTS(A) A, sizeof(A), CONTENTS
+TEST(TEST_NAME, s_n_printf_macro_expansion) {
+  char buf[BUFSIZ];
+  snprintf(BUF_AND_SIZE(buf), CONTENTS);
+  EXPECT_STREQ(CONTENTS, buf);
+
+  snprintf(BUF_AND_SIZE_AND_CONTENTS(buf));
+  EXPECT_STREQ(CONTENTS, buf);
+
+  sprintf(BUF_AND_CONTENTS(buf));
+  EXPECT_STREQ(CONTENTS, buf);
 }

@@ -50,7 +50,7 @@ extern "C" int __pthread_clone(void* (*fn)(void*), void* child_stack, int flags,
 
 extern "C" void ATTRIBUTES _thread_created_hook(pid_t thread_id);
 
-static const int kPthreadInitFailed = 1;
+extern "C" int __set_tls(void* ptr);
 
 static pthread_mutex_t gPthreadStackCreationLock = PTHREAD_MUTEX_INITIALIZER;
 
@@ -80,30 +80,6 @@ void  __init_tls(pthread_internal_t* thread) {
     sigaltstack(&ss, NULL);
     thread->alternate_signal_stack = ss.ss_sp;
   }
-}
-
-// This trampoline is called from the assembly _pthread_clone function.
-// Our 'tls' and __pthread_clone's 'child_stack' are one and the same, just growing in
-// opposite directions.
-extern "C" void __thread_entry(void* (*func)(void*), void* arg, void** tls) {
-  // Wait for our creating thread to release us. This lets it have time to
-  // notify gdb about this thread before we start doing anything.
-  // This also provides the memory barrier needed to ensure that all memory
-  // accesses previously made by the creating thread are visible to us.
-  pthread_mutex_t* start_mutex = (pthread_mutex_t*) &tls[TLS_SLOT_SELF];
-  pthread_mutex_lock(start_mutex);
-  pthread_mutex_destroy(start_mutex);
-
-  pthread_internal_t* thread = (pthread_internal_t*) tls[TLS_SLOT_THREAD_ID];
-  thread->tls = tls;
-  __init_tls(thread);
-
-  if ((thread->internal_flags & kPthreadInitFailed) != 0) {
-    pthread_exit(NULL);
-  }
-
-  void* result = func(arg);
-  pthread_exit(result);
 }
 
 __LIBC_ABI_PRIVATE__
@@ -238,7 +214,7 @@ int pthread_create(pthread_t* thread_out, pthread_attr_t const* attr,
   if (init_errno != 0) {
     // Mark the thread detached and let its __thread_entry run to
     // completion. (It'll just exit immediately, cleaning up its resources.)
-    thread->internal_flags |= kPthreadInitFailed;
+    thread->internal_flags |= PTHREAD_INTERNAL_FLAG_THREAD_INIT_FAILED;
     thread->attr.flags |= PTHREAD_ATTR_FLAG_DETACHED;
     return init_errno;
   }

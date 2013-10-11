@@ -25,13 +25,33 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-/* see the implementation of __set_tls and pthread.c to understand this
- * code. Basically, the content of gs:[0] always is a pointer to the base
- * address of the tls region
- */
-void*   __get_tls(void)
-{
-  void*  tls;
-  asm ( "   movl  %%gs:0, %0" : "=r"(tls) );
-  return tls;
+
+#include <pthread.h>
+
+#include "pthread_internal.h"
+
+#include "private/bionic_tls.h"
+
+// This trampoline is called from the assembly _pthread_clone function.
+// Our 'tls' and __pthread_clone's 'child_stack' are one and the same, just growing in
+// opposite directions.
+extern "C" void __thread_entry(void* (*func)(void*), void* arg, void** tls) {
+  // Wait for our creating thread to release us. This lets it have time to
+  // notify gdb about this thread before we start doing anything.
+  // This also provides the memory barrier needed to ensure that all memory
+  // accesses previously made by the creating thread are visible to us.
+  pthread_mutex_t* start_mutex = (pthread_mutex_t*) &tls[TLS_SLOT_SELF];
+  pthread_mutex_lock(start_mutex);
+  pthread_mutex_destroy(start_mutex);
+
+  pthread_internal_t* thread = (pthread_internal_t*) tls[TLS_SLOT_THREAD_ID];
+  thread->tls = tls;
+  __init_tls(thread);
+
+  if ((thread->internal_flags & PTHREAD_INTERNAL_FLAG_THREAD_INIT_FAILED) != 0) {
+    pthread_exit(NULL);
+  }
+
+  void* result = func(arg);
+  pthread_exit(result);
 }

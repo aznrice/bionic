@@ -25,13 +25,12 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#include <unistd.h>
-#include "cpuacct.h"
 
-extern int __setresuid(uid_t, uid_t, uid_t);
+#include <errno.h>
+#include <stdint.h>
 
-int seteuid(uid_t euid)
-{
-    cpuacct_add(euid);
-    return __setresuid(-1, euid,-1);
+#include "private/bionic_tls.h"
+
+volatile int*  __errno() {
+  return reinterpret_cast<int*>(&(__get_tls()[TLS_SLOT_ERRNO]));
 }

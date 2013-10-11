@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2008 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,13 +25,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+
 #include <unistd.h>
-#include "cpuacct.h"
 
-extern int __setreuid(uid_t ruid, uid_t euid);
-
-int setreuid(uid_t ruid, uid_t euid)
-{
-    cpuacct_add(euid);
-    return __setreuid(ruid, euid);
+int seteuid(uid_t euid) {
+  return setresuid(-1, euid,-1);
 }
