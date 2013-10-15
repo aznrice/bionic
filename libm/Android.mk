@@ -118,6 +118,8 @@ libm_common_src_files += \
     upstream-freebsd/lib/msun/src/s_finitef.c \
     upstream-freebsd/lib/msun/src/s_floor.c \
     upstream-freebsd/lib/msun/src/s_floorf.c \
+    upstream-freebsd/lib/msun/src/s_fma.c \
+    upstream-freebsd/lib/msun/src/s_fmaf.c \
     upstream-freebsd/lib/msun/src/s_fmax.c \
     upstream-freebsd/lib/msun/src/s_fmaxf.c \
     upstream-freebsd/lib/msun/src/s_fmin.c \
@@ -137,6 +139,8 @@ libm_common_src_files += \
     upstream-freebsd/lib/msun/src/s_log1pf.c \
     upstream-freebsd/lib/msun/src/s_logb.c \
     upstream-freebsd/lib/msun/src/s_logbf.c \
+    upstream-freebsd/lib/msun/src/s_lrint.c \
+    upstream-freebsd/lib/msun/src/s_lrintf.c \
     upstream-freebsd/lib/msun/src/s_lround.c \
     upstream-freebsd/lib/msun/src/s_lroundf.c \
     upstream-freebsd/lib/msun/src/s_modf.c \
@@ -237,26 +241,27 @@ libm_mips_src_files := mips/fenv.c
 
 libm_generic_src_files := \
     upstream-freebsd/lib/msun/src/e_sqrt.c \
-    upstream-freebsd/lib/msun/src/e_sqrtf.c \
-    upstream-freebsd/lib/msun/src/s_fma.c \
-    upstream-freebsd/lib/msun/src/s_fmaf.c \
-    upstream-freebsd/lib/msun/src/s_lrint.c \
-    upstream-freebsd/lib/msun/src/s_lrintf.c
+    upstream-freebsd/lib/msun/src/e_sqrtf.c
+
+#    upstream-freebsd/lib/msun/src/s_fma.c \
+#    upstream-freebsd/lib/msun/src/s_fmaf.c \
+#    upstream-freebsd/lib/msun/src/s_lrint.c \
+#    upstream-freebsd/lib/msun/src/s_lrintf.c
 
 libm_arm_neon_optimized_src_files := \
     arm/e_pow.S \
     arm/e_sqrt.S \
-    arm/e_sqrtf.S \
-    arm/s_fma.S \
-    arm/s_fmaf.S \
-    arm/s_lrint.S \
-    arm/s_lrintf.S
+    arm/e_sqrtf.S
+
+#    arm/s_fma.S \
+#    arm/s_fmaf.S \
+#    arm/s_lrint.S \
+#    arm/s_lrintf.S
 
 ifneq ($(ARCH_ARM_HAVE_NEON),true)
   libm_common_src_files += $(libm_generic_src_files)
 else # ARM NEON
-  libm_common_src_files += $(libm_generic_src_files) \
-      arm/e_pow.S
+  libm_common_src_files += $(libm_arm_neon_optimized_src_files) \
   libm_common_cflags += -D__NEON__ -fno-if-conversion
 endif
 
