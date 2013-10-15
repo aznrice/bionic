@@ -261,7 +261,7 @@ libm_arm_neon_optimized_src_files := \
 ifneq ($(ARCH_ARM_HAVE_NEON),true)
   libm_common_src_files += $(libm_generic_src_files)
 else # ARM NEON
-  libm_common_src_files += $(libm_arm_neon_optimized_src_files) \
+  libm_common_src_files += $(libm_arm_neon_optimized_src_files)
   libm_common_cflags += -D__NEON__ -fno-if-conversion
 endif
 
